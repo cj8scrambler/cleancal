@@ -32,6 +32,7 @@ cleancal/
 │   ├── build.sh                 # Build APK using Docker (host)
 │   ├── install.sh               # Install APK to local device (host)
 │   ├── run-emulator.sh          # Run emulator in Docker (host)
+│   ├── check-vnc.sh             # Check VNC connectivity (host)
 │   └── start-emulator.sh        # Emulator initialization (container)
 ├── Dockerfile.build             # Docker image for building
 ├── Dockerfile.emulator          # Docker image for emulator
@@ -53,6 +54,10 @@ The project includes two types of scripts for different purposes:
   - This is the main script you run from your host machine
   - Detects KVM availability and configures the container accordingly
   - Builds the Docker image and starts the emulator container
+- **`scripts/check-vnc.sh`** - Verifies VNC server connectivity
+  - Checks if the emulator container is running
+  - Verifies VNC server is accessible on port 5900
+  - Provides troubleshooting information
 
 ### Container Scripts (Run inside Docker)
 
@@ -150,6 +155,30 @@ vncviewer localhost:5900
 Or use any VNC client application and connect to `localhost:5900`.
 
 **Note**: The first run may take several minutes as the emulator initializes the Android system.
+
+### Troubleshooting VNC Connection
+
+If you cannot connect to the VNC server:
+
+1. **Verify the container is running:**
+   ```bash
+   docker ps | grep cleancal-emulator
+   ```
+
+2. **Check VNC connectivity:**
+   ```bash
+   ./scripts/check-vnc.sh
+   ```
+
+3. **Check container logs:**
+   ```bash
+   docker logs <container-id>
+   ```
+
+4. **Common issues:**
+   - **Port conflict**: Another service might be using port 5900. Stop it or change the port mapping in `docker-compose.yml`
+   - **VNC client display number**: Some VNC clients use display numbers (`:0`, `:1`) instead of ports. Use port `5900` explicitly: `localhost:5900`
+   - **Firewall**: Check if your firewall is blocking port 5900
 
 ### Hardware Acceleration
 

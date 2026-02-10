@@ -45,3 +45,9 @@ fi
 
 echo ""
 echo "Emulator stopped."
+echo ""
+echo "If you had trouble connecting via VNC, check:"
+echo "1. Container is running: docker ps | grep cleancal-emulator"
+echo "2. Port is exposed: docker port <container-id> 5900"
+echo "3. Try connecting with: vncviewer localhost:5900"
+echo "4. Check container logs: docker logs <container-id>"
