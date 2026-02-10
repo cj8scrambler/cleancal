@@ -74,9 +74,16 @@ make run-emulator
 3. Connect via VNC:
 
 ```bash
-vncviewer localhost:5900
-# or use any VNC client: Remmina, TigerVNC, etc.
+# For TigerVNC, TightVNC (display number):
+vncviewer localhost:0
+
+# For gvncviewer / GNOME VNC Viewer (port with double colon):
+gvncviewer localhost::5900
+
+# Remmina or other GUI tools: use localhost and port 5900
 ```
+
+**Important**: VNC clients interpret connection strings differently. If using `gvncviewer`, you MUST use `localhost::5900` (double colon) or it will try to connect to port 11800!
 
 4. You should see the CleanCal app running with "Welcome to CleanCal" text
 

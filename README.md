@@ -149,10 +149,20 @@ The emulator will:
 Connect to the emulator using a VNC client:
 
 ```bash
+# For TigerVNC, TightVNC, RealVNC - use display number
+vncviewer localhost:0
+
+# For gvncviewer (GNOME VNC Viewer) - use double colon for port
+gvncviewer localhost::5900
+
+# For other clients that accept port directly
 vncviewer localhost:5900
 ```
 
-Or use any VNC client application and connect to `localhost:5900`.
+**Important**: VNC clients interpret connection strings differently:
+- **Display number syntax** (`localhost:0`): The number is a display ID where `:0` = port 5900, `:1` = port 5901, etc.
+- **Port syntax** (`localhost::5900`): Use double colon `::` to specify the port directly
+- Some clients like `gvncviewer` interpret single colon as display number, so `localhost:5900` becomes port 11800 (5900+5900)!
 
 **Note**: The first run may take several minutes as the emulator initializes the Android system.
 
@@ -177,7 +187,11 @@ If you cannot connect to the VNC server:
 
 4. **Common issues:**
    - **Port conflict**: Another service might be using port 5900. Stop it or change the port mapping in `docker-compose.yml`
-   - **VNC client display number**: Some VNC clients use display numbers (`:0`, `:1`) instead of ports. Use port `5900` explicitly: `localhost:5900`
+   - **VNC client display number confusion**: This is the most common issue!
+     - VNC clients interpret `localhost:N` differently
+     - **Display number syntax**: `localhost:0` means port 5900 (`:0`=5900, `:1`=5901, etc.)
+     - **Port syntax**: Use `localhost::5900` (double colon) to specify port directly
+     - **gvncviewer issue**: `gvncviewer localhost:5900` tries port 11800 (5900+5900) - use `gvncviewer localhost::5900` instead!
    - **Firewall**: Check if your firewall is blocking port 5900
 
 ### Hardware Acceleration

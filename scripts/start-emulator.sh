@@ -52,9 +52,13 @@ adb shell am start -n com.cleancal/.MainActivity || true
 echo ""
 echo "===================================================================================="
 echo "Android Emulator is running!"
-echo "VNC server is available on port 5900"
-echo "Connect using: vncviewer localhost:5900"
-echo "Or from host: vncviewer <container-ip>:5900"
+echo "VNC server is available on port 5900 (display :0)"
+echo ""
+echo "Connect using:"
+echo "  vncviewer localhost:0          # TigerVNC/TightVNC (display number)"
+echo "  gvncviewer localhost::5900     # gvncviewer (double colon for port)"
+echo ""
+echo "Note: gvncviewer localhost:5900 will try port 11800 - use :: for port!"
 echo "===================================================================================="
 
 # Keep container running
