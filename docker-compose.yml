@@ -25,8 +25,6 @@ services:
       - "5555:5555"
     environment:
       - DISPLAY=${DISPLAY:-:0}
-    devices:
-      - /dev/kvm:/dev/kvm
     working_dir: /workspace
 
 volumes:

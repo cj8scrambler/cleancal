@@ -128,7 +128,9 @@ Or use any VNC client application and connect to `localhost:5900`.
 
 ### Hardware Acceleration
 
-For better performance, ensure KVM is enabled on your Linux host:
+The emulator automatically detects and uses KVM hardware acceleration when available. If KVM is not available, the emulator will run in software mode (slower but functional).
+
+To enable KVM on your Linux host:
 
 ```bash
 # Check if KVM is available
@@ -138,6 +140,8 @@ ls /dev/kvm
 sudo modprobe kvm
 sudo modprobe kvm_intel  # or kvm_amd for AMD processors
 ```
+
+**The emulator will work without KVM**, but performance will be significantly slower.
 
 ## Development
 

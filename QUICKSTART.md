@@ -112,9 +112,11 @@ After successful build:
 
 ### Emulator Won't Start
 
-**Problem:** Missing KVM support
+**Problem:** Emulator fails to start or runs very slowly
 
 **Solution:**
+- The emulator works without KVM but will be slower
+- For better performance, enable KVM:
 ```bash
 # Check if KVM is available
 ls /dev/kvm
@@ -122,6 +124,7 @@ ls /dev/kvm
 # If missing, enable in BIOS and load module
 sudo modprobe kvm
 ```
+- The run-emulator.sh script automatically detects and uses KVM when available
 
 ### Can't Connect via VNC
 

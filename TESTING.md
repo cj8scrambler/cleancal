@@ -15,7 +15,7 @@ This document provides testing procedures to verify the Android build framework.
    - adb installed and configured
 
 3. **For Emulator Testing**:
-   - KVM support enabled (for hardware acceleration)
+   - KVM support recommended but not required (for hardware acceleration)
    - VNC client installed
 
 ## Test Procedures
@@ -194,12 +194,15 @@ Expected:
 
 ### Emulator Won't Start
 
-**Cause**: KVM not available
+**Cause**: Various issues with emulator startup
 
 **Solution**:
-- Enable virtualization in BIOS
-- Load KVM kernel module: `sudo modprobe kvm`
-- Emulator will run in software mode (slower) without KVM
+- The emulator works without KVM, but is slower
+- For better performance, enable KVM:
+  - Enable virtualization in BIOS
+  - Load KVM kernel module: `sudo modprobe kvm`
+- Check Docker logs for specific errors: `docker logs <container-id>`
+- The run-emulator.sh script automatically adapts to KVM availability
 
 ### VNC Connection Fails
 
