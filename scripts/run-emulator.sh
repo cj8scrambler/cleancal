@@ -12,7 +12,7 @@ if [ ! -e /dev/kvm ]; then
 fi
 
 # Build the emulator image
-docker-compose build emulator
+docker compose build emulator
 
 # Run the emulator
 echo ""
@@ -20,7 +20,7 @@ echo "Starting emulator container..."
 echo "This may take several minutes on first run..."
 echo ""
 
-docker-compose up emulator
+docker compose up emulator
 
 echo ""
 echo "Emulator stopped."

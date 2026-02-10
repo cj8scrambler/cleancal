@@ -1,20 +1,15 @@
 # Android emulator environment
-FROM ubuntu:22.04
+# Using thyrlian/android-sdk which has Android SDK pre-installed
+FROM thyrlian/android-sdk:latest
 
 # Set environment variables
-ENV ANDROID_HOME=/opt/android-sdk
-ENV ANDROID_SDK_ROOT=/opt/android-sdk
-ENV PATH=${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator
 ENV DISPLAY=:0
+
+USER root
 
 # Install required packages including X11 and graphics
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    openjdk-17-jdk \
-    wget \
-    unzip \
-    git \
-    curl \
     xvfb \
     x11vnc \
     fluxbox \
@@ -30,16 +25,9 @@ RUN apt-get update && \
     libasound2 \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Android SDK command line tools
-RUN mkdir -p ${ANDROID_HOME}/cmdline-tools && \
-    cd ${ANDROID_HOME}/cmdline-tools && \
-    wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip && \
-    unzip commandlinetools-linux-*_latest.zip && \
-    rm commandlinetools-linux-*_latest.zip && \
-    mv cmdline-tools latest
-
 # Accept licenses and install SDK components including emulator
 RUN yes | sdkmanager --licenses || true && \
+    sdkmanager --update && \
     sdkmanager "platform-tools" \
     "platforms;android-34" \
     "build-tools;34.0.0" \
@@ -55,9 +43,6 @@ RUN echo "no" | avdmanager create avd \
 
 # Set working directory
 WORKDIR /workspace
-
-# Set Java home
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 # Expose VNC port
 EXPOSE 5900

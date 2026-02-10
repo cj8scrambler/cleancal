@@ -1,42 +1,23 @@
 # Android build environment
-FROM ubuntu:22.04
+# Using thyrlian/android-sdk which has Android SDK pre-installed
+FROM thyrlian/android-sdk:latest
 
-# Set environment variables
-ENV ANDROID_HOME=/opt/android-sdk
-ENV ANDROID_SDK_ROOT=/opt/android-sdk
-ENV PATH=${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator
+USER root
 
-# Install required packages
+# Update CA certificates to fix SSL issues
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    openjdk-17-jdk \
-    wget \
-    unzip \
-    git \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Download and install Android SDK command line tools
-RUN mkdir -p ${ANDROID_HOME}/cmdline-tools && \
-    cd ${ANDROID_HOME}/cmdline-tools && \
-    wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip && \
-    unzip commandlinetools-linux-*_latest.zip && \
-    rm commandlinetools-linux-*_latest.zip && \
-    mv cmdline-tools latest
-
-# Accept licenses and install SDK components
-RUN yes | sdkmanager --licenses || true && \
-    sdkmanager "platform-tools" \
-    "platforms;android-34" \
-    "build-tools;34.0.0" \
-    "emulator" \
-    "system-images;android-34;google_apis;x86_64"
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates-java && \
+    update-ca-certificates -f && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /workspace
 
-# Set Java home
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+# Accept licenses (in case they're not already accepted)
+RUN yes | sdkmanager --licenses || true
+
+# Note: Additional SDK components installation may fail in restricted networks
+# The base image already includes common components like platform-tools and build-tools
 
 # Default command
 CMD ["/bin/bash"]

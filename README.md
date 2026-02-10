@@ -10,6 +10,13 @@ CleanCal is a Kotlin-based Android application designed for electronic wall cale
 
 - Docker and Docker Compose (for containerized builds and emulation)
 - For local installation: Android SDK with `adb` in PATH
+- **Internet access required for first build** to download:
+  - Gradle distribution
+  - Android Gradle Plugin
+  - Android SDK components
+  - Project dependencies (AndroidX, Kotlin, etc.)
+
+After the first successful build, subsequent builds can use cached dependencies.
 
 ## Project Structure
 
@@ -35,6 +42,24 @@ cleancal/
 ```
 
 ## Building the App
+
+### Quick Start with Make
+
+The easiest way to build and run the app:
+
+```bash
+# Build the APK
+make build
+
+# Install to connected device
+make install
+
+# Run emulator
+make run-emulator
+
+# Show all available commands
+make help
+```
 
 ### Using Docker (Recommended)
 
@@ -138,7 +163,7 @@ To clean and rebuild:
 
 ```bash
 # Using Docker
-docker-compose run --rm build ./gradlew clean assembleDebug
+docker compose run --rm build ./gradlew clean assembleDebug
 
 # Locally
 ./gradlew clean assembleDebug
@@ -165,13 +190,15 @@ The emulator container (`Dockerfile.emulator`) includes:
 - VNC Server for remote UI access
 - System image for x86_64 emulation
 
-## Troubleshooting
+### Troubleshooting
 
 ### Build Issues
 
+- **Network restrictions**: If building in a restricted network environment, you may need to pre-download Android SDK components and Gradle dependencies
 - Ensure Docker is running: `docker ps`
 - Clear Gradle cache: `./gradlew clean`
-- Rebuild Docker images: `docker-compose build --no-cache`
+- Rebuild Docker images: `docker compose build --no-cache`
+- **Plugin not found errors**: The Android Gradle Plugin and dependencies need to be downloaded from Maven repositories. Ensure your environment has access to https://google.com and https://maven.google.com
 
 ### Emulator Issues
 

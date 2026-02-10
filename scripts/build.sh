@@ -6,10 +6,10 @@ set -e
 echo "Building Android APK using Docker..."
 
 # Build the Docker image
-docker-compose build build
+docker compose build build
 
 # Run the build
-docker-compose run --rm build
+docker compose run --rm build
 
 echo ""
 echo "Build complete!"
