@@ -1,0 +1,23 @@
+# Android build environment
+# Using thyrlian/android-sdk which has Android SDK pre-installed
+FROM thyrlian/android-sdk:latest
+
+USER root
+
+# Update CA certificates to fix SSL issues
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates-java && \
+    update-ca-certificates -f && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /workspace
+
+# Accept licenses (in case they're not already accepted)
+RUN yes | sdkmanager --licenses || true
+
+# Note: Additional SDK components installation may fail in restricted networks
+# The base image already includes common components like platform-tools and build-tools
+
+# Default command
+CMD ["/bin/bash"]

@@ -1,0 +1,55 @@
+# Android emulator environment
+# Using thyrlian/android-sdk which has Android SDK pre-installed
+FROM thyrlian/android-sdk:latest
+
+# Set environment variables
+ENV DISPLAY=:0
+
+USER root
+
+# Install required packages including X11 and graphics
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    xvfb \
+    x11vnc \
+    fluxbox \
+    libgl1-mesa-dev \
+    libglu1-mesa \
+    libpulse0 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxi6 \
+    libxtst6 \
+    libnss3 \
+    libxrandr2 \
+    libasound2t64 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Accept licenses and install SDK components including emulator
+RUN yes | sdkmanager --licenses || true && \
+    sdkmanager --update && \
+    sdkmanager "platform-tools" \
+    "platforms;android-34" \
+    "build-tools;34.0.0" \
+    "emulator" \
+    "system-images;android-34;google_apis;x86_64"
+
+# Create AVD
+RUN echo "no" | avdmanager create avd \
+    --name test_avd \
+    --package "system-images;android-34;google_apis;x86_64" \
+    --device "pixel_5" \
+    --force
+
+# Set working directory
+WORKDIR /workspace
+
+# Expose VNC port
+EXPOSE 5900
+
+# Copy startup script
+COPY scripts/start-emulator.sh /usr/local/bin/start-emulator.sh
+RUN chmod +x /usr/local/bin/start-emulator.sh
+
+# Default command
+CMD ["/usr/local/bin/start-emulator.sh"]
