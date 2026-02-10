@@ -12,14 +12,15 @@ fluxbox &
 sleep 2
 
 echo "Starting VNC server..."
-x11vnc -display :0 -rfbport 5900 -forever -nopw -shared -bg -o /tmp/x11vnc.log
+VNC_LOG="/tmp/x11vnc.log"
+x11vnc -display :0 -rfbport 5900 -forever -nopw -shared -bg -o "$VNC_LOG"
 
 # Wait a moment and verify VNC server started
 sleep 2
 if ! pgrep -x x11vnc > /dev/null; then
     echo "ERROR: VNC server failed to start!"
     echo "VNC log:"
-    cat /tmp/x11vnc.log 2>/dev/null || echo "No log file found"
+    cat "$VNC_LOG" 2>/dev/null || echo "No log file found"
     exit 1
 fi
 echo "VNC server started successfully on port 5900"

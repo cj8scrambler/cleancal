@@ -57,7 +57,7 @@ if [ -n "$NC_CMD" ]; then
         echo "⚠ Warning: Could not connect to port 5900"
     fi
 else
-    echo "ℹ Install 'netcat' (nc/ncat) to test port connectivity"
+    echo "ℹ Install netcat to test port connectivity (package: netcat, netcat-traditional, or nmap-ncat)"
 fi
 
 echo ""
