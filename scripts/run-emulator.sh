@@ -26,14 +26,19 @@ echo ""
 
 # Create a temporary override file to add KVM device if available
 if [ "$KVM_AVAILABLE" = true ]; then
-    cat > /tmp/docker-compose.kvm.yml << 'EOF'
+    # Create a unique temporary file
+    TEMP_COMPOSE=$(mktemp /tmp/docker-compose.kvm.XXXXXX.yml)
+    
+    # Set up cleanup trap
+    trap "rm -f '$TEMP_COMPOSE'" EXIT INT TERM
+    
+    cat > "$TEMP_COMPOSE" << 'EOF'
 services:
   emulator:
     devices:
       - /dev/kvm:/dev/kvm
 EOF
-    docker compose -f docker-compose.yml -f /tmp/docker-compose.kvm.yml up emulator
-    rm -f /tmp/docker-compose.kvm.yml
+    docker compose -f docker-compose.yml -f "$TEMP_COMPOSE" up emulator
 else
     docker compose up emulator
 fi
