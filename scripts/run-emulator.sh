@@ -26,10 +26,10 @@ echo ""
 
 # Create a temporary override file to add KVM device if available
 if [ "$KVM_AVAILABLE" = true ]; then
-    # Create a unique temporary file
-    TEMP_COMPOSE=$(mktemp /tmp/docker-compose.kvm.XXXXXX.yml)
+    # Create a unique temporary file with .yml suffix
+    TEMP_COMPOSE=$(mktemp --suffix=.yml)
     
-    # Set up cleanup trap
+    # Set up cleanup trap to ensure file is removed on exit
     trap "rm -f '$TEMP_COMPOSE'" EXIT INT TERM
     
     cat > "$TEMP_COMPOSE" << 'EOF'
