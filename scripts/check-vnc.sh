@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check VNC connection script
-set -e
+# Note: Not using 'set -e' to allow diagnostic checks to continue even if some commands fail
 
 echo "Checking emulator container and VNC connectivity..."
 echo ""
@@ -41,14 +41,23 @@ echo "✓ VNC server is running (PID: $VNC_RUNNING)"
 # Try to check if port is listening
 echo ""
 echo "Attempting to test VNC connection..."
+NC_CMD=""
 if command -v nc &> /dev/null; then
-    if nc -zv localhost 5900 2>&1 | grep -q succeeded; then
+    NC_CMD="nc"
+elif command -v netcat &> /dev/null; then
+    NC_CMD="netcat"
+elif command -v ncat &> /dev/null; then
+    NC_CMD="ncat"
+fi
+
+if [ -n "$NC_CMD" ]; then
+    if $NC_CMD -zv localhost 5900 2>&1 | grep -q -E 'succeeded|open'; then
         echo "✓ Port 5900 is accessible"
     else
         echo "⚠ Warning: Could not connect to port 5900"
     fi
 else
-    echo "ℹ Install 'netcat' to test port connectivity"
+    echo "ℹ Install 'netcat' (nc/ncat) to test port connectivity"
 fi
 
 echo ""
