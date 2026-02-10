@@ -32,3 +32,9 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Docker volumes
+.docker/
+
+# Gradle wrapper JAR (included in repo for builds)
+# gradle/wrapper/gradle-wrapper.jar

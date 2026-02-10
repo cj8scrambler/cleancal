@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  build:
+    build:
+      context: .
+      dockerfile: Dockerfile.build
+    image: cleancal-build:latest
+    volumes:
+      - .:/workspace
+      - gradle-cache:/root/.gradle
+    working_dir: /workspace
+    command: ./gradlew assembleDebug
+
+  emulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.emulator
+    image: cleancal-emulator:latest
+    privileged: true
+    volumes:
+      - .:/workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    ports:
+      - "5900:5900"
+      - "5554:5554"
+      - "5555:5555"
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+    devices:
+      - /dev/kvm:/dev/kvm
+    working_dir: /workspace
+
+volumes:
+  gradle-cache:
