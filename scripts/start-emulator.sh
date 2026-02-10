@@ -3,6 +3,10 @@
 # Start emulator script
 set -e
 
+# Clean up any leftover X11 lock files from previous runs
+echo "Cleaning up X11 lock files..."
+rm -f /tmp/.X0-lock /tmp/.X11-unix/X0
+
 echo "Starting Xvfb..."
 Xvfb :0 -screen 0 1920x1080x24 &
 sleep 2

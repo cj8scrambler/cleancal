@@ -192,6 +192,8 @@ If you cannot connect to the VNC server:
      - **Display number syntax**: `localhost:0` means port 5900 (`:0`=5900, `:1`=5901, etc.)
      - **Port syntax**: Use `localhost::5900` (double colon) to specify port directly
      - **gvncviewer issue**: `gvncviewer localhost:5900` tries port 11800 (5900+5900) - use `gvncviewer localhost::5900` instead!
+   - **Restart failures after Ctrl-C**: The container now automatically cleans up X11 lock files on restart
+   - **Display redraw issues**: The emulator uses software rendering which may have some visual glitches. This is expected in headless mode.
    - **Firewall**: Check if your firewall is blocking port 5900
 
 ### Hardware Acceleration
