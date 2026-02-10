@@ -22,7 +22,7 @@ RUN apt-get update && \
     libxtst6 \
     libnss3 \
     libxrandr2 \
-    libasound2 \
+    libasound2t64 \
     && rm -rf /var/lib/apt/lists/*
 
 # Accept licenses and install SDK components including emulator

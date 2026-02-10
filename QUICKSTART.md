@@ -80,6 +80,8 @@ vncviewer localhost:5900
 
 4. You should see the CleanCal app running with "Welcome to CleanCal" text
 
+**Note**: The `run-emulator.sh` script (run on your host) automatically manages the emulator container, including running the internal `start-emulator.sh` script. You only need to use `run-emulator.sh`.
+
 ## Common Commands
 
 ```bash
