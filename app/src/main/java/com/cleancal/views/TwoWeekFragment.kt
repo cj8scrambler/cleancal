@@ -94,7 +94,7 @@ class TwoWeekFragment : BaseCalendarFragment() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 1f
             )
-            setPadding(4, 4, 4, 4)
+            setPadding(2, 2, 2, 2)
             
             // Create rounded background with subtle color
             background = GradientDrawable().apply {
@@ -104,24 +104,17 @@ class TwoWeekFragment : BaseCalendarFragment() {
             }
         }
         
-        // Day header - smaller text size
-        val dayOfWeek = TextView(requireContext()).apply {
-            text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-            textSize = 12f  // Reduced from 18f
+        // Day header - combined on one line with smaller text
+        val headerText = "${date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${date.dayOfMonth}"
+        val dayHeader = TextView(requireContext()).apply {
+            text = headerText
+            textSize = 10f  // Much smaller - reduced from 12f/16f
             setTextColor(Color.parseColor("#757575"))
             gravity = android.view.Gravity.CENTER
+            setPadding(2, 2, 2, 2)
         }
         
-        val dayNumber = TextView(requireContext()).apply {
-            text = date.dayOfMonth.toString()
-            textSize = 16f  // Reduced from 24f
-            setTextColor(Color.parseColor("#424242"))
-            gravity = android.view.Gravity.CENTER
-            setTypeface(null, android.graphics.Typeface.BOLD)
-        }
-        
-        column.addView(dayOfWeek)
-        column.addView(dayNumber)
+        column.addView(dayHeader)
         
         // Add subtle divider
         val divider = View(requireContext()).apply {
