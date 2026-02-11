@@ -37,6 +37,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var calendarRepository: CalendarRepository
     private var wasSignedIn: Boolean = false
     
+    companion object {
+        private const val CALENDAR_MONTHS_BEFORE = 2L
+        private const val CALENDAR_MONTHS_AFTER = 2L
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
@@ -102,8 +107,8 @@ class MainActivity : AppCompatActivity() {
     private fun loadGoogleCalendarEvents() {
         lifecycleScope.launch {
             try {
-                val startDate = LocalDate.now().minusMonths(2).atStartOfDay()
-                val endDate = LocalDate.now().plusMonths(2).atTime(23, 59, 59)
+                val startDate = LocalDate.now().minusMonths(CALENDAR_MONTHS_BEFORE).atStartOfDay()
+                val endDate = LocalDate.now().plusMonths(CALENDAR_MONTHS_AFTER).atTime(23, 59, 59)
                 
                 val googleEvents = calendarRepository.fetchCalendarEvents(startDate, endDate)
                 
@@ -124,8 +129,8 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun generateExampleEvents() {
-        val startDate = LocalDate.now().minusMonths(2)
-        val endDate = LocalDate.now().plusMonths(2)
+        val startDate = LocalDate.now().minusMonths(CALENDAR_MONTHS_BEFORE)
+        val endDate = LocalDate.now().plusMonths(CALENDAR_MONTHS_AFTER)
         events = ExampleDataGenerator.generateEvents(startDate, endDate)
     }
     

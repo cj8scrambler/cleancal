@@ -101,7 +101,7 @@ class CalendarRepository(private val context: Context) {
             lowerTitle.contains("birthday") -> CalendarType.BIRTHDAY
             lowerTitle.contains("holiday") -> CalendarType.HOLIDAY
             lowerTitle.contains("reminder") || lowerTitle.contains("task") -> CalendarType.REMINDER
-            lowerTitle.contains("meeting") || lowerTitle.contains("work") || 
+            lowerTitle.contains("meeting") || lowerTitle.contains("work") ||
                 lowerTitle.contains("call") || lowerTitle.contains("standup") -> CalendarType.WORK
             else -> CalendarType.PERSONAL
         }

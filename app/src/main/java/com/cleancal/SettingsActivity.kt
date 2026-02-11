@@ -34,7 +34,7 @@ class SettingsActivity : AppCompatActivity() {
                 updateAccountStatus()
             } catch (e: ApiException) {
                 // Sign-in failed
-                txtAccountStatus.text = "Sign-in failed: ${e.statusCode}"
+                txtAccountStatus.text = "Unable to connect to Google account. Please try again."
             }
         }
     }
