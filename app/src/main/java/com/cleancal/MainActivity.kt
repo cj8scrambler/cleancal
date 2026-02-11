@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var events: List<CalendarEvent>
     private lateinit var authManager: GoogleAuthManager
     private lateinit var calendarRepository: CalendarRepository
+    private var wasSignedIn: Boolean = false
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +87,10 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun loadEvents() {
-        if (authManager.isSignedIn()) {
+        val isSignedIn = authManager.isSignedIn()
+        wasSignedIn = isSignedIn
+        
+        if (isSignedIn) {
             // Load real Google Calendar events
             loadGoogleCalendarEvents()
         } else {
@@ -189,8 +193,12 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         
-        // Reload events if authentication state changed
-        loadEvents()
+        // Check if authentication state changed
+        val isSignedIn = authManager.isSignedIn()
+        if (isSignedIn != wasSignedIn) {
+            // Authentication state changed, reload events
+            loadEvents()
+        }
         
         // Reload preference in case it was changed
         val prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)

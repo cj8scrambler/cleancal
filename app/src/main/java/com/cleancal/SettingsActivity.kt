@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.cleancal.auth.GoogleAuthManager
 import com.cleancal.models.ViewType
@@ -22,6 +23,21 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var btnConnectGoogle: MaterialButton
     private lateinit var txtAccountStatus: TextView
     private lateinit var authManager: GoogleAuthManager
+    
+    private val signInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                task.getResult(ApiException::class.java)
+                updateAccountStatus()
+            } catch (e: ApiException) {
+                // Sign-in failed
+                txtAccountStatus.text = "Sign-in failed: ${e.statusCode}"
+            }
+        }
+    }
     
     private val viewTypeOptions = listOf(
         "Two week view",
@@ -107,7 +123,7 @@ class SettingsActivity : AppCompatActivity() {
             } else {
                 // Sign in
                 val signInIntent = authManager.getSignInIntent()
-                startActivityForResult(signInIntent, GoogleAuthManager.RC_SIGN_IN)
+                signInLauncher.launch(signInIntent)
             }
         }
     }
@@ -120,21 +136,6 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             txtAccountStatus.text = getString(R.string.settings_google_status_disconnected)
             btnConnectGoogle.text = getString(R.string.settings_connect_google)
-        }
-    }
-    
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        
-        if (requestCode == GoogleAuthManager.RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                task.getResult(ApiException::class.java)
-                updateAccountStatus()
-            } catch (e: ApiException) {
-                // Sign-in failed
-                txtAccountStatus.text = "Sign-in failed: ${e.statusCode}"
-            }
         }
     }
 
