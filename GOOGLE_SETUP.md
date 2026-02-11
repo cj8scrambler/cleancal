@@ -64,7 +64,7 @@ CleanCal now supports Google Calendar integration, allowing users to:
 **Important:** The debug keystore is automatically created the first time you build a debug APK. If you haven't built the app yet, build it first:
 
 ```bash
-# Build the app (this creates the debug keystore)
+# Build the app (this creates the debug keystore inside the container)
 make build
 # OR
 ./scripts/build.sh
@@ -74,19 +74,21 @@ make build
 
 After building, run this command from the project root to get the SHA-1 fingerprint:
 ```bash
-docker compose run --rm build keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+docker compose run --rm build keytool -list -v -keystore /root/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
 ```
+
+**Note:** The Docker container runs as root, so the keystore is located at `/root/.android/debug.keystore` inside the container, not `~/.android/debug.keystore`.
 
 **Alternative: Generate keystore without full build**
 
 If you just want to generate the keystore without doing a full build:
 ```bash
-docker compose run --rm build keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
+docker compose run --rm build keytool -genkey -v -keystore /root/.android/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
 ```
 
 Then get the fingerprint:
 ```bash
-docker compose run --rm build keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+docker compose run --rm build keytool -list -v -keystore /root/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
 ```
 
 **Using local keytool** (if you have Android SDK installed locally):
@@ -149,19 +151,26 @@ Once authenticated:
 
 **Problem:** When running the keytool command, you get an error that the keystore file doesn't exist.
 
+**Common causes:**
+1. You haven't built the app yet (the keystore is created during the first build)
+2. You're using the wrong path (should be `/root/.android/debug.keystore` not `~/.android/debug.keystore` in the Docker container)
+
 **Solution:** The debug keystore is automatically created when you first build a debug APK. You have two options:
 
 1. **Build the app first** (recommended):
    ```bash
    make build
    ```
-   Then run the keytool command to get the SHA-1 fingerprint.
+   Then run the keytool command with the correct path:
+   ```bash
+   docker compose run --rm build keytool -list -v -keystore /root/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+   ```
 
 2. **Generate the keystore manually**:
    ```bash
-   docker compose run --rm build keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
+   docker compose run --rm build keytool -genkey -v -keystore /root/.android/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
    ```
-   Then get the fingerprint with the original keytool command.
+   Then get the fingerprint with the corrected keytool command above.
 
 ### "Sign-in failed" Error
 
@@ -225,17 +234,19 @@ For developers building and testing CleanCal:
 Since this project uses Docker for builds, you can run any Android SDK tool (including keytool) within the build container:
 
 ```bash
-# Get SHA-1 fingerprint for debug keystore
-docker compose run --rm build keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+# Get SHA-1 fingerprint for debug keystore (note: use /root/ not ~/ in container)
+docker compose run --rm build keytool -list -v -keystore /root/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
 
 # Run any other Android SDK command
 docker compose run --rm build <command>
 ```
 
+**Important:** The Docker container runs as root, so paths inside the container use `/root/` instead of `~/`.
+
 ### Debug Builds
-- The debug build uses the debug keystore at `~/.android/debug.keystore` inside the Docker container
+- The debug build uses the debug keystore at `/root/.android/debug.keystore` inside the Docker container
 - Make sure to add the debug SHA-1 fingerprint to your OAuth client
-- Use the Docker command above to get the fingerprint
+- Use the Docker command above to get the fingerprint (with `/root/` path)
 
 ### Release Builds
 - Use your release keystore's SHA-1 fingerprint
