@@ -2,4 +2,48 @@
 <resources>
     <string name="app_name">CleanCal</string>
     <string name="welcome_text">Welcome to CleanCal</string>
+    
+    <!-- View type labels -->
+    <string name="view_two_week">2W</string>
+    <string name="view_month">M</string>
+    <string name="view_three_day">3D</string>
+    <string name="view_one_day">1D</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_default_view">Default View</string>
+    <string name="settings_default_view_summary">Choose which view type to display on startup</string>
+    <string name="settings_google_account">Google Account</string>
+    <string name="settings_connect_google">Connect Google Account</string>
+    <string name="settings_google_coming_soon">Google Calendar integration coming soon</string>
+    
+    <!-- Days of week -->
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    
+    <!-- Months -->
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+    
+    <!-- Content descriptions -->
+    <string name="cd_settings">Settings</string>
+    <string name="cd_two_week_view">Two week view</string>
+    <string name="cd_month_view">Month view</string>
+    <string name="cd_three_day_view">Three day view</string>
+    <string name="cd_one_day_view">One day view</string>
 </resources>

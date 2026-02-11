@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/surface">
+
+    <!-- Header with month and year -->
+    <TextView
+        android:id="@+id/monthYearText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_medium"
+        android:textSize="@dimen/text_size_extra_large"
+        android:textColor="@color/text_primary"
+        android:gravity="center"
+        android:text="Month View" />
+
+    <!-- Days of week header -->
+    <LinearLayout
+        android:id="@+id/daysOfWeekHeader"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/day_header_height"
+        android:orientation="horizontal"
+        android:background="@color/control_bar">
+        
+        <!-- Will be populated programmatically -->
+        
+    </LinearLayout>
+
+    <!-- RecyclerView for month grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/monthGridRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false" />
+
+</LinearLayout>

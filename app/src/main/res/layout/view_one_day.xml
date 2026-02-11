@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/surface">
+
+    <!-- Header with date -->
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_medium"
+        android:textSize="@dimen/text_size_extra_large"
+        android:textColor="@color/text_primary"
+        android:gravity="center"
+        android:text="Single Day View" />
+
+    <!-- Scrollable content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Time column -->
+            <LinearLayout
+                android:id="@+id/timeColumn"
+                android:layout_width="@dimen/time_column_width"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/control_bar" />
+
+            <!-- Events column -->
+            <FrameLayout
+                android:id="@+id/eventsContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
