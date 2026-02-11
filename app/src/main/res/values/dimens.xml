@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Large display optimized dimensions for 3840x2160 landscape -->
+    
+    <!-- Text sizes -->
+    <dimen name="text_size_huge">48sp</dimen>
+    <dimen name="text_size_extra_large">36sp</dimen>
+    <dimen name="text_size_large">28sp</dimen>
+    <dimen name="text_size_medium">24sp</dimen>
+    <dimen name="text_size_normal">20sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+    
+    <!-- Control bar -->
+    <dimen name="control_bar_height">80dp</dimen>
+    <dimen name="control_button_size">64dp</dimen>
+    <dimen name="control_button_margin">8dp</dimen>
+    
+    <!-- Calendar view -->
+    <dimen name="day_cell_padding">12dp</dimen>
+    <dimen name="event_padding">8dp</dimen>
+    <dimen name="event_margin">4dp</dimen>
+    <dimen name="event_corner_radius">8dp</dimen>
+    <dimen name="time_slot_height">80dp</dimen>
+    <dimen name="time_column_width">80dp</dimen>
+    
+    <!-- Spacing -->
+    <dimen name="spacing_tiny">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="spacing_extra_large">32dp</dimen>
+    
+    <!-- Calendar grid -->
+    <dimen name="day_header_height">60dp</dimen>
+    <dimen name="month_day_cell_height">160dp</dimen>
+</resources>

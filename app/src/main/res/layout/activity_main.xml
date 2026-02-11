@@ -1,22 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".MainActivity">
+    android:background="@color/background">
 
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/welcome_text"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <!-- Calendar ViewPager2 -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/calendarViewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/controlBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Control Bar -->
+    <LinearLayout
+        android:id="@+id/controlBar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/control_bar_height"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/control_bar"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- View Type Buttons -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTwoWeekView"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
+            android:layout_margin="@dimen/control_button_margin"
+            android:text="@string/view_two_week"
+            android:textSize="@dimen/text_size_medium"
+            android:contentDescription="@string/cd_two_week_view" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMonthView"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
+            android:layout_margin="@dimen/control_button_margin"
+            android:text="@string/view_month"
+            android:textSize="@dimen/text_size_medium"
+            android:contentDescription="@string/cd_month_view" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnThreeDayView"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
+            android:layout_margin="@dimen/control_button_margin"
+            android:text="@string/view_three_day"
+            android:textSize="@dimen/text_size_medium"
+            android:contentDescription="@string/cd_three_day_view" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOneDayView"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
+            android:layout_margin="@dimen/control_button_margin"
+            android:text="@string/view_one_day"
+            android:textSize="@dimen/text_size_medium"
+            android:contentDescription="@string/cd_one_day_view" />
+
+        <!-- Spacer -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <!-- Settings Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettings"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
+            android:layout_margin="@dimen/control_button_margin"
+            app:icon="@android:drawable/ic_menu_preferences"
+            android:contentDescription="@string/cd_settings" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
