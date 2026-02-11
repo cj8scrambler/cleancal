@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/surface">
+    android:background="@color/background">
 
     <!-- Header with date range -->
     <TextView
         android:id="@+id/dateRangeText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/spacing_medium"
-        android:textSize="@dimen/text_size_extra_large"
-        android:textColor="@color/text_primary"
+        android:padding="@dimen/spacing_small"
+        android:textSize="@dimen/text_size_medium"
+        android:textColor="@color/text_secondary"
         android:gravity="center"
         android:text="Two Week View" />
 

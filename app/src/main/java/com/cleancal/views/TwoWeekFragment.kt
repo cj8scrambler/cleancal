@@ -1,6 +1,7 @@
 package com.cleancal.views
 
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +30,7 @@ class TwoWeekFragment : BaseCalendarFragment() {
         
         dateRangeText = view.findViewById(R.id.dateRangeText)
         contentLayout = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.HORIZONTAL
+            orientation = LinearLayout.VERTICAL
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -59,11 +60,29 @@ class TwoWeekFragment : BaseCalendarFragment() {
         
         contentLayout.removeAllViews()
         
-        // Create columns for each day
-        for (i in 0..13) {
-            val date = startDate.plusDays(i.toLong())
-            val dayColumn = createDayColumn(date)
-            contentLayout.addView(dayColumn)
+        // Create 2 rows with 7 columns each
+        val firstWeekRow = createWeekRow(startDate, 0)
+        val secondWeekRow = createWeekRow(startDate, 7)
+        
+        contentLayout.addView(firstWeekRow)
+        contentLayout.addView(secondWeekRow)
+    }
+    
+    private fun createWeekRow(startDate: LocalDate, offset: Int): LinearLayout {
+        return LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+            
+            // Create 7 day columns for this week
+            for (i in 0..6) {
+                val date = startDate.plusDays((offset + i).toLong())
+                val dayColumn = createDayColumn(date)
+                addView(dayColumn)
+            }
         }
     }
 
@@ -75,22 +94,28 @@ class TwoWeekFragment : BaseCalendarFragment() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 1f
             )
-            setPadding(8, 8, 8, 8)
-            setBackgroundColor(Color.WHITE)
+            setPadding(4, 4, 4, 4)
+            
+            // Create rounded background with subtle color
+            background = GradientDrawable().apply {
+                setColor(Color.parseColor("#FEFEFE"))
+                cornerRadius = 12f
+                setStroke(1, Color.parseColor("#E8E8E8"))
+            }
         }
         
-        // Day header
+        // Day header - smaller text size
         val dayOfWeek = TextView(requireContext()).apply {
             text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-            textSize = 18f
-            setTextColor(Color.DKGRAY)
+            textSize = 12f  // Reduced from 18f
+            setTextColor(Color.parseColor("#757575"))
             gravity = android.view.Gravity.CENTER
         }
         
         val dayNumber = TextView(requireContext()).apply {
             text = date.dayOfMonth.toString()
-            textSize = 24f
-            setTextColor(Color.BLACK)
+            textSize = 16f  // Reduced from 24f
+            setTextColor(Color.parseColor("#424242"))
             gravity = android.view.Gravity.CENTER
             setTypeface(null, android.graphics.Typeface.BOLD)
         }
@@ -98,13 +123,13 @@ class TwoWeekFragment : BaseCalendarFragment() {
         column.addView(dayOfWeek)
         column.addView(dayNumber)
         
-        // Add divider
+        // Add subtle divider
         val divider = View(requireContext()).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                2
+                1
             )
-            setBackgroundColor(Color.LTGRAY)
+            setBackgroundColor(Color.parseColor("#EEEEEE"))
         }
         column.addView(divider)
         
@@ -125,15 +150,20 @@ class TwoWeekFragment : BaseCalendarFragment() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply {
-                setMargins(4, 4, 4, 4)
+                setMargins(3, 3, 3, 3)
             }
-            setPadding(8, 8, 8, 8)
-            setBackgroundColor(event.calendarType.color)
+            setPadding(6, 6, 6, 6)
+            
+            // Create rounded background with event color
+            background = GradientDrawable().apply {
+                setColor(event.calendarType.color)
+                cornerRadius = 8f
+            }
         }
         
         val titleView = TextView(requireContext()).apply {
             text = event.title
-            textSize = 16f
+            textSize = 14f  // Slightly reduced from 16f
             setTextColor(Color.WHITE)
             setTypeface(null, android.graphics.Typeface.BOLD)
         }
@@ -141,7 +171,7 @@ class TwoWeekFragment : BaseCalendarFragment() {
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
         val timeView = TextView(requireContext()).apply {
             text = "${event.startTime.format(timeFormatter)} - ${event.endTime.format(timeFormatter)}"
-            textSize = 14f
+            textSize = 12f  // Reduced from 14f
             setTextColor(Color.WHITE)
         }
         
