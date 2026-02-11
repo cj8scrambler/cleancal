@@ -39,6 +39,21 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    
+    packagingOptions {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
+    }
 }
 
 dependencies {
@@ -70,11 +85,17 @@ dependencies {
     implementation("com.google.api-client:google-api-client-android:1.33.0") {
         exclude(group = "org.apache.httpcomponents")
     }
-    implementation("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0")
+    implementation("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
     
     // HTTP Client
-    implementation("com.google.http-client:google-http-client-gson:1.42.0")
-    implementation("com.google.http-client:google-http-client-android:1.42.0")
+    implementation("com.google.http-client:google-http-client-gson:1.42.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    implementation("com.google.http-client:google-http-client-android:1.42.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
     
     // Coroutines for async operations
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
