@@ -67,14 +67,14 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     
     // Google API Client for Calendar
-    implementation("com.google.api-client:google-api-client-android:2.2.0") {
+    implementation("com.google.api-client:google-api-client-android:1.33.0") {
         exclude(group = "org.apache.httpcomponents")
-        exclude(group = "com.google.guava")
     }
     implementation("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0")
     
     // HTTP Client
-    implementation("com.google.http-client:google-http-client-gson:1.43.3")
+    implementation("com.google.http-client:google-http-client-gson:1.42.0")
+    implementation("com.google.http-client:google-http-client-android:1.42.0")
     
     // Coroutines for async operations
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
