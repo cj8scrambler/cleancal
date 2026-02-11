@@ -61,16 +61,37 @@ CleanCal now supports Google Calendar integration, allowing users to:
 
 #### Getting Your SHA-1 Certificate Fingerprint
 
+**Important:** The debug keystore is automatically created the first time you build a debug APK. If you haven't built the app yet, build it first:
+
+```bash
+# Build the app (this creates the debug keystore)
+make build
+# OR
+./scripts/build.sh
+```
+
 **Using the Docker build container** (recommended for this project):
 
-For debug builds, run this command from the project root:
+After building, run this command from the project root to get the SHA-1 fingerprint:
+```bash
+docker compose run --rm build keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+**Alternative: Generate keystore without full build**
+
+If you just want to generate the keystore without doing a full build:
+```bash
+docker compose run --rm build keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
+```
+
+Then get the fingerprint:
 ```bash
 docker compose run --rm build keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
 ```
 
 **Using local keytool** (if you have Android SDK installed locally):
 
-For debug builds:
+For debug builds (after building the app or generating the keystore):
 ```bash
 keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
 ```
@@ -123,6 +144,24 @@ Once authenticated:
 4. The app will return to showing example events
 
 ## Troubleshooting
+
+### "Keystore file does not exist" Error
+
+**Problem:** When running the keytool command, you get an error that the keystore file doesn't exist.
+
+**Solution:** The debug keystore is automatically created when you first build a debug APK. You have two options:
+
+1. **Build the app first** (recommended):
+   ```bash
+   make build
+   ```
+   Then run the keytool command to get the SHA-1 fingerprint.
+
+2. **Generate the keystore manually**:
+   ```bash
+   docker compose run --rm build keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
+   ```
+   Then get the fingerprint with the original keytool command.
 
 ### "Sign-in failed" Error
 
