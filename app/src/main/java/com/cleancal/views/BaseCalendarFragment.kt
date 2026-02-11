@@ -10,7 +10,10 @@ import java.time.LocalDate
 
 abstract class BaseCalendarFragment : Fragment() {
     protected var currentDate: LocalDate = LocalDate.now()
-    protected var events: List<CalendarEvent> = emptyList()
+    private var eventsInternal: List<CalendarEvent> = emptyList()
+    
+    protected val events: List<CalendarEvent>
+        get() = eventsInternal
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,7 +25,7 @@ abstract class BaseCalendarFragment : Fragment() {
     }
 
     fun setEvents(events: List<CalendarEvent>) {
-        this.events = events
+        this.eventsInternal = events
     }
 
     abstract fun updateView()
