@@ -61,7 +61,16 @@ CleanCal now supports Google Calendar integration, allowing users to:
 
 #### Getting Your SHA-1 Certificate Fingerprint
 
-For debug builds, run this command:
+**Using the Docker build container** (recommended for this project):
+
+For debug builds, run this command from the project root:
+```bash
+docker compose run --rm build keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+**Using local keytool** (if you have Android SDK installed locally):
+
+For debug builds:
 ```bash
 keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
 ```
@@ -172,9 +181,22 @@ CleanCal requests the following OAuth scope:
 
 For developers building and testing CleanCal:
 
+### Using Docker Build Container
+
+Since this project uses Docker for builds, you can run any Android SDK tool (including keytool) within the build container:
+
+```bash
+# Get SHA-1 fingerprint for debug keystore
+docker compose run --rm build keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+
+# Run any other Android SDK command
+docker compose run --rm build <command>
+```
+
 ### Debug Builds
-- The debug build uses the debug keystore at `~/.android/debug.keystore`
+- The debug build uses the debug keystore at `~/.android/debug.keystore` inside the Docker container
 - Make sure to add the debug SHA-1 fingerprint to your OAuth client
+- Use the Docker command above to get the fingerprint
 
 ### Release Builds
 - Use your release keystore's SHA-1 fingerprint
@@ -182,7 +204,8 @@ For developers building and testing CleanCal:
 
 ### Multiple Developers
 - Each developer needs to add their debug keystore's SHA-1 fingerprint to the OAuth client
-- Or share a common debug keystore (not recommended for production)
+- When using Docker, all developers will share the same debug keystore (inside the container)
+- This simplifies team development as everyone uses the same fingerprint
 
 ### Testing
 - Use test accounts during development
