@@ -30,9 +30,7 @@ run-emulator:
 
 clean:
 	@echo "Cleaning build artifacts..."
-	@rm -rf app/build
-	@rm -rf .gradle
-	@rm -rf build
+	@docker compose run --rm build sh -c "rm -rf app/build .gradle build"
 
 docker-build:
 	@echo "Building Docker images..."
