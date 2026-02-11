@@ -26,48 +26,15 @@
             android:text="@string/settings_default_view_summary"
             android:textSize="@dimen/text_size_normal"
             android:textColor="@color/text_secondary"
-            android:layout_marginBottom="@dimen/spacing_medium" />
+            android:layout_marginBottom="@dimen/spacing_small" />
 
-        <RadioGroup
-            android:id="@+id/defaultViewRadioGroup"
+        <Spinner
+            android:id="@+id/defaultViewSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_extra_large">
-
-            <RadioButton
-                android:id="@+id/radioTwoWeek"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cd_two_week_view"
-                android:textSize="@dimen/text_size_normal"
-                android:padding="@dimen/spacing_small"
-                android:checked="true" />
-
-            <RadioButton
-                android:id="@+id/radioMonth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cd_month_view"
-                android:textSize="@dimen/text_size_normal"
-                android:padding="@dimen/spacing_small" />
-
-            <RadioButton
-                android:id="@+id/radioThreeDay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cd_three_day_view"
-                android:textSize="@dimen/text_size_normal"
-                android:padding="@dimen/spacing_small" />
-
-            <RadioButton
-                android:id="@+id/radioOneDay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cd_one_day_view"
-                android:textSize="@dimen/text_size_normal"
-                android:padding="@dimen/spacing_small" />
-
-        </RadioGroup>
+            android:minHeight="48dp"
+            android:padding="@dimen/spacing_small"
+            android:layout_marginBottom="@dimen/spacing_extra_large" />
 
         <!-- Google Account Section -->
         <TextView
