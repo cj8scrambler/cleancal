@@ -143,6 +143,12 @@ class SettingsActivity : AppCompatActivity() {
         finish()
         return true
     }
+    
+    override fun onResume() {
+        super.onResume()
+        // Update account status when activity resumes
+        updateAccountStatus()
+    }
 
     companion object {
         const val PREFS_NAME = "CleanCalPrefs"
