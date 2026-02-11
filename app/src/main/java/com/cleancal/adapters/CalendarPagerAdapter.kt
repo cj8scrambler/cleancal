@@ -16,7 +16,7 @@ import java.time.YearMonth
 class CalendarPagerAdapter(
     activity: FragmentActivity,
     private var viewType: ViewType,
-    private val events: List<CalendarEvent>
+    private var events: List<CalendarEvent>
 ) : FragmentStateAdapter(activity) {
 
     private val fragments = mutableMapOf<Int, BaseCalendarFragment>()
@@ -57,6 +57,11 @@ class CalendarPagerAdapter(
     fun updateViewType(newViewType: ViewType) {
         viewType = newViewType
         notifyDataSetChanged()
+    }
+    
+    fun updateEvents(newEvents: List<CalendarEvent>) {
+        events = newEvents
+        notifyEventsChanged(newEvents)
     }
 
     fun notifyEventsChanged(newEvents: List<CalendarEvent>) {

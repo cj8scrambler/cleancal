@@ -1,17 +1,28 @@
 package com.cleancal
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.cleancal.auth.GoogleAuthManager
 import com.cleancal.models.ViewType
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.android.material.button.MaterialButton
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var spinner: Spinner
+    private lateinit var btnConnectGoogle: MaterialButton
+    private lateinit var txtAccountStatus: TextView
+    private lateinit var authManager: GoogleAuthManager
+    
     private val viewTypeOptions = listOf(
         "Two week view",
         "Month view",
@@ -31,8 +42,22 @@ class SettingsActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // Initialize auth manager
+        authManager = GoogleAuthManager(this)
+        
+        // Initialize views
         spinner = findViewById(R.id.defaultViewSpinner)
+        btnConnectGoogle = findViewById(R.id.btnConnectGoogle)
+        txtAccountStatus = findViewById(R.id.txtAccountStatus)
 
+        // Setup default view spinner
+        setupViewSpinner()
+        
+        // Setup Google sign-in
+        setupGoogleSignIn()
+    }
+    
+    private fun setupViewSpinner() {
         // Create adapter for spinner
         val adapter = ArrayAdapter(
             this,
@@ -61,6 +86,54 @@ class SettingsActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 // Do nothing
+            }
+        }
+    }
+    
+    private fun setupGoogleSignIn() {
+        // Enable the button
+        btnConnectGoogle.isEnabled = true
+        
+        // Update UI based on current sign-in state
+        updateAccountStatus()
+        
+        // Set click listener
+        btnConnectGoogle.setOnClickListener {
+            if (authManager.isSignedIn()) {
+                // Sign out
+                authManager.signOut {
+                    updateAccountStatus()
+                }
+            } else {
+                // Sign in
+                val signInIntent = authManager.getSignInIntent()
+                startActivityForResult(signInIntent, GoogleAuthManager.RC_SIGN_IN)
+            }
+        }
+    }
+    
+    private fun updateAccountStatus() {
+        if (authManager.isSignedIn()) {
+            val email = authManager.getAccountEmail()
+            txtAccountStatus.text = "Connected: $email"
+            btnConnectGoogle.text = getString(R.string.settings_disconnect_google)
+        } else {
+            txtAccountStatus.text = getString(R.string.settings_google_status_disconnected)
+            btnConnectGoogle.text = getString(R.string.settings_connect_google)
+        }
+    }
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        
+        if (requestCode == GoogleAuthManager.RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                task.getResult(ApiException::class.java)
+                updateAccountStatus()
+            } catch (e: ApiException) {
+                // Sign-in failed
+                txtAccountStatus.text = "Sign-in failed: ${e.statusCode}"
             }
         }
     }

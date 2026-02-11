@@ -8,13 +8,18 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.cleancal.adapters.CalendarPagerAdapter
+import com.cleancal.auth.GoogleAuthManager
 import com.cleancal.data.ExampleDataGenerator
 import com.cleancal.models.CalendarEvent
 import com.cleancal.models.ViewType
+import com.cleancal.repository.CalendarRepository
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class MainActivity : AppCompatActivity() {
     
@@ -28,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: CalendarPagerAdapter
     private var currentViewType = ViewType.TWO_WEEK
     private lateinit var events: List<CalendarEvent>
+    private lateinit var authManager: GoogleAuthManager
+    private lateinit var calendarRepository: CalendarRepository
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,11 +45,15 @@ class MainActivity : AppCompatActivity() {
         
         setContentView(R.layout.activity_main)
         
+        // Initialize auth and repository
+        authManager = GoogleAuthManager(this)
+        calendarRepository = CalendarRepository(this)
+        
         // Load default view preference
         loadDefaultView()
         
-        // Generate example events
-        generateExampleEvents()
+        // Load events (example or real)
+        loadEvents()
         
         // Initialize views
         initializeViews()
@@ -74,10 +85,51 @@ class MainActivity : AppCompatActivity() {
         currentViewType = ViewType.valueOf(savedViewType ?: ViewType.TWO_WEEK.name)
     }
     
+    private fun loadEvents() {
+        if (authManager.isSignedIn()) {
+            // Load real Google Calendar events
+            loadGoogleCalendarEvents()
+        } else {
+            // Load example events
+            generateExampleEvents()
+        }
+    }
+    
+    private fun loadGoogleCalendarEvents() {
+        lifecycleScope.launch {
+            try {
+                val startDate = LocalDate.now().minusMonths(2).atStartOfDay()
+                val endDate = LocalDate.now().plusMonths(2).atTime(23, 59, 59)
+                
+                val googleEvents = calendarRepository.fetchCalendarEvents(startDate, endDate)
+                
+                if (googleEvents.isNotEmpty()) {
+                    events = googleEvents
+                    updateAdapter()
+                } else {
+                    // Fallback to example events if no Google events
+                    generateExampleEvents()
+                    updateAdapter()
+                }
+            } catch (e: Exception) {
+                // Fallback to example events on error
+                generateExampleEvents()
+                updateAdapter()
+            }
+        }
+    }
+    
     private fun generateExampleEvents() {
         val startDate = LocalDate.now().minusMonths(2)
         val endDate = LocalDate.now().plusMonths(2)
         events = ExampleDataGenerator.generateEvents(startDate, endDate)
+    }
+    
+    private fun updateAdapter() {
+        if (::adapter.isInitialized) {
+            // Update existing adapter
+            adapter.updateEvents(events)
+        }
     }
     
     private fun initializeViews() {
@@ -136,6 +188,10 @@ class MainActivity : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
+        
+        // Reload events if authentication state changed
+        loadEvents()
+        
         // Reload preference in case it was changed
         val prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
         val savedViewType = prefs.getString(SettingsActivity.PREF_DEFAULT_VIEW, currentViewType.name)

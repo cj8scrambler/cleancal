@@ -15,6 +15,8 @@
     <string name="settings_default_view_summary">Choose which view type to display on startup</string>
     <string name="settings_google_account">Google Account</string>
     <string name="settings_connect_google">Connect Google Account</string>
+    <string name="settings_disconnect_google">Disconnect Google Account</string>
+    <string name="settings_google_status_disconnected">Not connected</string>
     <string name="settings_google_coming_soon">Google Calendar integration coming soon</string>
     
     <!-- Days of week -->
