@@ -17,7 +17,27 @@ CleanCal is a Kotlin-based Android application designed for electronic wall cale
 
 ## Google Calendar Setup
 
-To use Google Calendar integration, you need to set up OAuth credentials in the Google Cloud Console. See [GOOGLE_SETUP.md](GOOGLE_SETUP.md) for detailed instructions.
+CleanCal supports Google Calendar integration, allowing you to display real calendar events instead of example data.
+
+### Quick Start (5 minutes)
+
+1. **Create OAuth Credentials**: Follow [QUICKSTART_AUTH.md](QUICKSTART_AUTH.md) for a fast setup
+2. **Update Configuration**: Add your OAuth client ID to `app/src/main/res/values/strings.xml`
+3. **Build and Test**: `make build` and connect your Google account
+
+### Documentation
+
+- **[QUICKSTART_AUTH.md](QUICKSTART_AUTH.md)**: 5-minute quick setup guide
+- **[GOOGLE_SETUP.md](GOOGLE_SETUP.md)**: Complete step-by-step instructions
+- **[AUTHENTICATION_FIX.md](AUTHENTICATION_FIX.md)**: Technical details and troubleshooting
+
+### Important Notes
+
+- **OAuth client ID required**: You must configure your own OAuth 2.0 client ID from Google Cloud Console
+- **One-time setup**: Configuration is needed once per development environment
+- **Read-only access**: App only requests calendar read permissions
+
+See the documentation above for detailed setup instructions.
 
 ## Prerequisites
 
