@@ -28,21 +28,62 @@ class SettingsActivity : AppCompatActivity() {
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        Log.d(TAG, "Sign-in result received: resultCode=${result.resultCode}")
+        Log.d(TAG, "=== Sign-In Result Received ===")
+        Log.d(TAG, "Result code: ${result.resultCode}")
+        Log.d(TAG, "Expected RESULT_OK: ${Activity.RESULT_OK}")
+        Log.d(TAG, "Match: ${result.resultCode == Activity.RESULT_OK}")
+        
         if (result.resultCode == Activity.RESULT_OK) {
+            Log.d(TAG, "Processing successful sign-in...")
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                Log.d(TAG, "Sign-in successful: ${account?.email}")
+                Log.d(TAG, "✓ Sign-in successful!")
+                Log.d(TAG, "  Email: ${account?.email}")
+                Log.d(TAG, "  Display name: ${account?.displayName}")
+                Log.d(TAG, "  ID: ${account?.id}")
+                Log.d(TAG, "  ID token: ${if (account?.idToken != null) "Present" else "NULL"}")
+                Log.d(TAG, "  Server auth code: ${account?.serverAuthCode ?: "NULL"}")
+                
+                // Check if account is now persisted
+                Log.d(TAG, "Verifying account persistence...")
+                val persistedAccount = GoogleSignIn.getLastSignedInAccount(this)
+                if (persistedAccount != null) {
+                    Log.d(TAG, "✓ Account successfully persisted: ${persistedAccount.email}")
+                } else {
+                    Log.e(TAG, "❌ CRITICAL: Account NOT persisted!")
+                    Log.e(TAG, "This usually means:")
+                    Log.e(TAG, "  1. OAuth client ID doesn't match Google Cloud Console")
+                    Log.e(TAG, "  2. SHA-1 fingerprint not registered")
+                    Log.e(TAG, "  3. Wrong client ID type (need Android client)")
+                }
+                
                 updateAccountStatus()
             } catch (e: ApiException) {
-                Log.e(TAG, "Sign-in failed: ${e.statusCode} - ${e.message}")
-                txtAccountStatus.text = "Sign-in failed: ${e.message}"
+                Log.e(TAG, "❌ Sign-in failed with ApiException")
+                Log.e(TAG, "  Status code: ${e.statusCode}")
+                Log.e(TAG, "  Status message: ${e.statusMessage}")
+                Log.e(TAG, "  Message: ${e.message}")
+                Log.e(TAG, "  Localized message: ${e.localizedMessage}")
+                
+                // Provide helpful diagnostic information
+                when (e.statusCode) {
+                    10 -> Log.e(TAG, "Error 10: DEVELOPER_ERROR - Check OAuth client ID and SHA-1 configuration")
+                    12500 -> Log.e(TAG, "Error 12500: SIGN_IN_REQUIRED - User needs to sign in")
+                    12501 -> Log.e(TAG, "Error 12501: SIGN_IN_CANCELLED - User cancelled the sign-in")
+                    else -> Log.e(TAG, "Unknown error code: ${e.statusCode}")
+                }
+                
+                txtAccountStatus.text = "Sign-in failed: Error ${e.statusCode} - ${e.message}"
             }
-        } else {
-            Log.w(TAG, "Sign-in cancelled or failed: resultCode=${result.resultCode}")
+        } else if (result.resultCode == Activity.RESULT_CANCELED) {
+            Log.w(TAG, "⚠ Sign-in cancelled by user")
             txtAccountStatus.text = "Sign-in cancelled"
+        } else {
+            Log.w(TAG, "⚠ Unexpected result code: ${result.resultCode}")
+            txtAccountStatus.text = "Sign-in failed with code: ${result.resultCode}"
         }
+        Log.d(TAG, "=== Sign-In Result Processing Complete ===")
     }
     
     private val viewTypeOptions = listOf(
@@ -113,43 +154,71 @@ class SettingsActivity : AppCompatActivity() {
     }
     
     private fun setupGoogleSignIn() {
+        Log.d(TAG, "=== Setting Up Google Sign-In ===")
+        
         // Check if OAuth client ID is configured
         if (!authManager.isClientIdConfigured()) {
+            Log.e(TAG, "❌ OAuth client ID not configured")
             txtAccountStatus.text = "OAuth client ID not configured. See GOOGLE_SETUP.md for setup instructions."
             btnConnectGoogle.isEnabled = false
             return
         }
         
+        Log.d(TAG, "✓ OAuth client ID is configured")
+        
         // Enable the button
         btnConnectGoogle.isEnabled = true
+        Log.d(TAG, "✓ Connect button enabled")
         
         // Update UI based on current sign-in state
         updateAccountStatus()
         
         // Set click listener
         btnConnectGoogle.setOnClickListener {
+            Log.d(TAG, "=== Connect Button Clicked ===")
             if (authManager.isSignedIn()) {
+                Log.d(TAG, "User is signed in - initiating sign out")
                 // Sign out
                 authManager.signOut {
+                    Log.d(TAG, "Sign out callback executed")
                     updateAccountStatus()
                 }
             } else {
+                Log.d(TAG, "User not signed in - initiating sign in")
                 // Sign in
                 val signInIntent = authManager.getSignInIntent()
+                Log.d(TAG, "Launching sign-in intent...")
                 signInLauncher.launch(signInIntent)
             }
         }
+        
+        Log.d(TAG, "=== Google Sign-In Setup Complete ===")
     }
     
     private fun updateAccountStatus() {
-        if (authManager.isSignedIn()) {
+        Log.d(TAG, "=== Updating Account Status UI ===")
+        val isSignedIn = authManager.isSignedIn()
+        Log.d(TAG, "Signed in: $isSignedIn")
+        
+        if (isSignedIn) {
             val email = authManager.getAccountEmail()
+            Log.d(TAG, "Updating UI for signed-in user: $email")
             txtAccountStatus.text = "Connected: $email"
             btnConnectGoogle.text = getString(R.string.settings_disconnect_google)
+            
+            // Check calendar permission
+            val hasPermission = authManager.hasCalendarPermission()
+            if (!hasPermission) {
+                Log.w(TAG, "⚠ Calendar permission not granted!")
+                txtAccountStatus.text = "Connected: $email (Calendar access not granted)"
+            }
         } else {
+            Log.d(TAG, "Updating UI for disconnected state")
             txtAccountStatus.text = getString(R.string.settings_google_status_disconnected)
             btnConnectGoogle.text = getString(R.string.settings_connect_google)
         }
+        
+        Log.d(TAG, "=== Account Status UI Updated ===")
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -159,7 +228,8 @@ class SettingsActivity : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "SettingsActivity resumed")
+        Log.d(TAG, "=== SettingsActivity Resumed ===")
+        Log.d(TAG, "Updating account status after resume...")
         // Update account status when activity resumes
         updateAccountStatus()
     }
