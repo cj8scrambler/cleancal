@@ -1,7 +1,19 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
+
+// Load local.properties file
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+// Get OAuth client ID from local.properties, fallback to empty string
+val googleOAuthClientId = localProperties.getProperty("google.oauth.clientId", "")
 
 android {
     namespace = "com.cleancal"
@@ -15,6 +27,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Inject OAuth client ID as BuildConfig field
+        buildConfigField("String", "GOOGLE_OAUTH_CLIENT_ID", "\"$googleOAuthClientId\"")
     }
 
     buildTypes {
@@ -38,6 +53,22 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+    }
+    
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
     }
 }
 
@@ -62,6 +93,28 @@ dependencies {
     
     // Fragment KTX
     implementation("androidx.fragment:fragment-ktx:1.6.2")
+    
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    
+    // Google API Client for Calendar
+    implementation("com.google.api-client:google-api-client-android:1.33.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    implementation("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    
+    // HTTP Client
+    implementation("com.google.http-client:google-http-client-gson:1.42.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    implementation("com.google.http-client:google-http-client-android:1.42.0") {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    
+    // Coroutines for async operations
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

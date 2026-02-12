@@ -6,6 +6,39 @@ Android app with a simple clean view for electronic wall calendars.
 
 CleanCal is a Kotlin-based Android application designed for electronic wall calendars. The app provides a clean, minimalistic interface optimized for always-on display scenarios.
 
+## Features
+
+- **Multiple Calendar Views**: Two-week, month, three-day, and single-day views
+- **Google Calendar Integration**: Connect your Google account to display real calendar events (read-only)
+- **Swipe Navigation**: Easy navigation between time periods
+- **Color-Coded Events**: Automatic categorization of events (work, personal, birthdays, reminders, holidays)
+- **Full-Screen Mode**: Optimized for wall-mounted tablets
+- **Always-On Display**: Keep screen awake for continuous display
+
+## Google Calendar Setup
+
+CleanCal supports Google Calendar integration, allowing you to display real calendar events instead of example data.
+
+### Quick Start (5 minutes)
+
+1. **Create OAuth Credentials**: Follow [QUICKSTART_AUTH.md](QUICKSTART_AUTH.md) for a fast setup
+2. **Update Configuration**: Add your OAuth client ID to `app/src/main/res/values/strings.xml`
+3. **Build and Test**: `make build` and connect your Google account
+
+### Documentation
+
+- **[QUICKSTART_AUTH.md](QUICKSTART_AUTH.md)**: 5-minute quick setup guide
+- **[GOOGLE_SETUP.md](GOOGLE_SETUP.md)**: Complete step-by-step instructions
+- **[AUTHENTICATION_FIX.md](AUTHENTICATION_FIX.md)**: Technical details and troubleshooting
+
+### Important Notes
+
+- **OAuth client ID required**: You must configure your own OAuth 2.0 client ID from Google Cloud Console
+- **One-time setup**: Configuration is needed once per development environment
+- **Read-only access**: App only requests calendar read permissions
+
+See the documentation above for detailed setup instructions.
+
 ## Prerequisites
 
 - Docker and Docker Compose (for containerized builds and emulation)

@@ -46,22 +46,22 @@
             android:textStyle="bold"
             android:layout_marginBottom="@dimen/spacing_small" />
 
+        <TextView
+            android:id="@+id/txtAccountStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_google_status_disconnected"
+            android:textSize="@dimen/text_size_normal"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConnectGoogle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_connect_google"
             android:textSize="@dimen/text_size_normal"
-            android:enabled="false"
             android:layout_marginBottom="@dimen/spacing_small" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/settings_google_coming_soon"
-            android:textSize="@dimen/text_size_normal"
-            android:textColor="@color/text_hint"
-            android:gravity="center" />
 
     </LinearLayout>
 

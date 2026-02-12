@@ -1,0 +1,18 @@
+## This file contains machine-specific properties for the CleanCal app.
+## Copy this file to 'local.properties' and update with your own values.
+## DO NOT commit local.properties to git - it's in .gitignore
+
+# SDK location (usually set by Android Studio automatically)
+# sdk.dir=/path/to/Android/Sdk
+
+# Google OAuth 2.0 Client ID for Calendar API
+# Instructions: https://github.com/cj8scrambler/cleancal/blob/main/GOOGLE_SETUP.md
+# 
+# To get your OAuth client ID:
+# 1. Go to https://console.cloud.google.com/apis/credentials
+# 2. Create or select an existing OAuth 2.0 Client ID for Android
+# 3. Add your debug keystore SHA-1 fingerprint
+# 4. Copy the Client ID and paste it below
+#
+# Example format: 123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com
+google.oauth.clientId=YOUR_OAUTH_CLIENT_ID_HERE
