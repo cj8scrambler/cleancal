@@ -6,7 +6,7 @@ This guide helps you quickly set up Google Calendar authentication for CleanCal.
 
 1. Create OAuth credentials in Google Cloud Console
 2. Copy your OAuth client ID
-3. Update `app/src/main/res/values/strings.xml` with your client ID
+3. Add it to `local.properties` file (not committed to git)
 4. Rebuild and test
 
 ## Step-by-Step (5 Minutes)
@@ -49,15 +49,17 @@ Copy the SHA-1 value and paste it into the OAuth client form.
 ### 3. Configure App (1 minute)
 
 ```bash
-# Edit strings.xml
-vi app/src/main/res/values/strings.xml
+# Copy template file
+cp local.properties.example local.properties
 
-# Find this line:
-<string name="default_web_client_id" translatable="false">YOUR_OAUTH_CLIENT_ID_HERE</string>
+# Edit local.properties
+vi local.properties
 
-# Replace with your OAuth client ID from Google Cloud Console:
-<string name="default_web_client_id" translatable="false">123456789012-abc...xyz.apps.googleusercontent.com</string>
+# Add your OAuth client ID:
+google.oauth.clientId=123456789012-abc...xyz.apps.googleusercontent.com
 ```
+
+**Note:** `local.properties` is in `.gitignore` - your OAuth credentials stay private!
 
 ### 4. Build and Test
 
@@ -129,9 +131,20 @@ docker compose run --rm build keytool -list -v \
 
 ### Button Stays Disabled
 
-**Cause:** Client ID still says "YOUR_OAUTH_CLIENT_ID_HERE"
+**Cause:** Client ID not configured in `local.properties`
 
-**Fix:** Actually update the value in strings.xml and rebuild
+**Fix:** 
+```bash
+# Create/edit local.properties
+cp local.properties.example local.properties
+vi local.properties
+
+# Add your actual OAuth client ID
+google.oauth.clientId=YOUR_ACTUAL_CLIENT_ID
+
+# Rebuild
+make build
+```
 
 ### Account Not Persisting
 
@@ -170,8 +183,9 @@ The fix requires you to:
 ## File Locations
 
 ```
-app/src/main/res/values/strings.xml     # Update this with your OAuth client ID
-app/src/main/java/com/cleancal/auth/    # Authentication code
+local.properties                          # Add your OAuth client ID here (not in git)
+local.properties.example                  # Template file
+app/src/main/java/com/cleancal/auth/     # Authentication code
 GOOGLE_SETUP.md                          # Detailed setup instructions
 AUTHENTICATION_FIX.md                    # Technical explanation of the fix
 ```
@@ -180,6 +194,7 @@ AUTHENTICATION_FIX.md                    # Technical explanation of the fix
 
 - OAuth client ID is not secret (it's in the APK)
 - Each developer should use their own OAuth credentials
+- **local.properties is gitignored** - your credentials stay private
 - Don't commit keystores to git
 - Use different OAuth clients for dev/prod
 
@@ -190,7 +205,8 @@ AUTHENTICATION_FIX.md                    # Technical explanation of the fix
 - [ ] Created OAuth consent screen
 - [ ] Created Android OAuth client with correct package and SHA-1
 - [ ] Copied OAuth client ID
-- [ ] Updated strings.xml with actual client ID (not placeholder)
+- [ ] Created `local.properties` from template
+- [ ] Added actual client ID to `local.properties`
 - [ ] Rebuilt app: `make build`
 - [ ] Connect button is enabled (not grayed out)
 - [ ] Can tap "Connect Google Account"

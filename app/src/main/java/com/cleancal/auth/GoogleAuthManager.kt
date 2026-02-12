@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.cleancal.R
+import com.cleancal.BuildConfig
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -18,12 +18,12 @@ class GoogleAuthManager(private val context: Context) {
     private val clientId: String
     
     init {
-        // Get OAuth client ID from string resources
-        clientId = context.getString(R.string.default_web_client_id)
+        // Get OAuth client ID from BuildConfig (read from local.properties at build time)
+        clientId = BuildConfig.GOOGLE_OAUTH_CLIENT_ID
         
         // Check if client ID is configured
-        if (clientId == "YOUR_OAUTH_CLIENT_ID_HERE" || clientId.isBlank()) {
-            Log.w(TAG, "OAuth client ID not configured. Please update default_web_client_id in strings.xml")
+        if (clientId.isBlank()) {
+            Log.w(TAG, "OAuth client ID not configured. Please add google.oauth.clientId to local.properties")
             Log.w(TAG, "See GOOGLE_SETUP.md for instructions on obtaining your OAuth client ID")
         } else {
             Log.d(TAG, "Initializing Google Sign-In with client ID")
@@ -96,7 +96,7 @@ class GoogleAuthManager(private val context: Context) {
     }
     
     fun isClientIdConfigured(): Boolean {
-        return clientId != "YOUR_OAUTH_CLIENT_ID_HERE" && clientId.isNotBlank()
+        return clientId.isNotBlank()
     }
     
     companion object {

@@ -19,11 +19,6 @@
     <string name="settings_google_status_disconnected">Not connected</string>
     <string name="settings_google_coming_soon">Google Calendar integration coming soon</string>
     
-    <!-- Google OAuth Configuration -->
-    <!-- Replace this with your OAuth 2.0 client ID from Google Cloud Console -->
-    <!-- Instructions: https://github.com/cj8scrambler/cleancal/blob/main/GOOGLE_SETUP.md -->
-    <string name="default_web_client_id" translatable="false">YOUR_OAUTH_CLIENT_ID_HERE</string>
-    
     <!-- Days of week -->
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>

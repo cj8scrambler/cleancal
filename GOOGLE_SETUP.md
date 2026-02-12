@@ -106,19 +106,25 @@ After creating your OAuth 2.0 credentials, you need to configure the client ID i
 
 **Important:** The OAuth client ID from step 4 must be added to the app's configuration for Google Sign-In to work properly.
 
-#### Option 1: Update strings.xml (Recommended for developers)
+#### Configure via local.properties (Recommended)
 
-1. Open `app/src/main/res/values/strings.xml` in your project
-2. Find the line with `default_web_client_id`
-3. Replace `YOUR_OAUTH_CLIENT_ID_HERE` with your actual OAuth 2.0 client ID
-4. Example:
-   ```xml
-   <string name="default_web_client_id" translatable="false">123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com</string>
+This is the recommended approach as it keeps your OAuth credentials out of version control.
+
+1. Copy the template file to create your local configuration:
+   ```bash
+   cp local.properties.example local.properties
    ```
 
-#### Option 2: Using google-services.json (For Firebase users)
+2. Open `local.properties` in a text editor
 
-If you're also using Firebase, you can add `google-services.json` to your `app/` directory, and the app will automatically use the client ID from that file.
+3. Replace `YOUR_OAUTH_CLIENT_ID_HERE` with your actual OAuth 2.0 client ID from step 4:
+   ```properties
+   google.oauth.clientId=123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com
+   ```
+
+4. Save the file
+
+**Note:** The `local.properties` file is already in `.gitignore` and will not be committed to version control. This keeps your OAuth credentials private and secure.
 
 **After configuration:**
 - Rebuild the app: `make build`
@@ -166,10 +172,13 @@ Once authenticated:
 **Solution:**
 1. Complete steps 1-4 above to create OAuth credentials in Google Cloud Console
 2. Copy your OAuth 2.0 client ID (it looks like: `123456789012-abc...xyz.apps.googleusercontent.com`)
-3. Open `app/src/main/res/values/strings.xml`
-4. Replace `YOUR_OAUTH_CLIENT_ID_HERE` with your actual client ID:
-   ```xml
-   <string name="default_web_client_id" translatable="false">YOUR_ACTUAL_CLIENT_ID_HERE</string>
+3. Create or edit `local.properties` in the project root:
+   ```bash
+   cp local.properties.example local.properties
+   ```
+4. Add your OAuth client ID:
+   ```properties
+   google.oauth.clientId=YOUR_ACTUAL_CLIENT_ID_HERE
    ```
 5. Rebuild the app: `make build`
 6. Reinstall on your device

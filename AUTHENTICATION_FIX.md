@@ -8,33 +8,76 @@
 
 ## What Was Fixed
 
-### 1. Added OAuth Client ID Support
+### 1. Moved OAuth Client ID to local.properties
 
-**File:** `app/src/main/res/values/strings.xml`
-```xml
-<!-- Replace this with your OAuth 2.0 client ID from Google Cloud Console -->
-<string name="default_web_client_id" translatable="false">YOUR_OAUTH_CLIENT_ID_HERE</string>
+**File:** `local.properties` (gitignored)
+```properties
+# Google OAuth 2.0 Client ID for Calendar API
+google.oauth.clientId=YOUR_OAUTH_CLIENT_ID_HERE
 ```
 
-### 2. Updated GoogleAuthManager
+**Previously:** OAuth client ID was stored in `strings.xml` (checked into git)
+**Now:** OAuth client ID is stored in `local.properties` (gitignored, private)
+
+### 2. Updated Build Configuration
+
+**File:** `app/build.gradle.kts`
+
+**Key changes:**
+- Reads OAuth client ID from `local.properties` at build time
+- Injects it as `BuildConfig.GOOGLE_OAUTH_CLIENT_ID`
+- Enables BuildConfig feature
+
+**Code:**
+```kotlin
+// Load local.properties file
+val localProperties = java.util.Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+// Get OAuth client ID from local.properties
+val googleOAuthClientId = localProperties.getProperty("google.oauth.clientId", "")
+
+android {
+    defaultConfig {
+        // Inject OAuth client ID as BuildConfig field
+        buildConfigField("String", "GOOGLE_OAUTH_CLIENT_ID", "\"$googleOAuthClientId\"")
+    }
+    
+    buildFeatures {
+        buildConfig = true  // Enable BuildConfig generation
+    }
+}
+```
+
+### 3. Updated GoogleAuthManager
 
 **File:** `app/src/main/java/com/cleancal/auth/GoogleAuthManager.kt`
 
 **Key changes:**
-- Added `clientId` property that reads from string resources
-- **Critical fix:** Added `.requestIdToken(clientId)` to `GoogleSignInOptions`
-- Added comprehensive logging throughout the class
-- Added `isClientIdConfigured()` method to check setup status
+- Changed from reading string resources to reading `BuildConfig`
+- **Critical fix:** Still uses `.requestIdToken(clientId)` for account persistence
+- Updated validation to check for blank client ID
 
 **Before:**
 ```kotlin
-val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-    .requestEmail()
-    .requestScopes(Scope(CalendarScopes.CALENDAR_READONLY))
-    .build()
+clientId = context.getString(R.string.default_web_client_id)
+if (clientId == "YOUR_OAUTH_CLIENT_ID_HERE" || clientId.isBlank()) {
+    // Not configured
+}
 ```
 
 **After:**
+```kotlin
+clientId = BuildConfig.GOOGLE_OAUTH_CLIENT_ID
+if (clientId.isBlank()) {
+    // Not configured
+}
+```
+
+The core fix remains the same:
 ```kotlin
 val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
     .requestEmail()
@@ -43,27 +86,24 @@ val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN
     .build()
 ```
 
-### 3. Enhanced SettingsActivity
+### 4. Created Template File
 
-**File:** `app/src/main/java/com/cleancal/SettingsActivity.kt`
+**File:** `local.properties.example`
 
-**Changes:**
-- Added check for OAuth client ID configuration
-- Disables "Connect Google Account" button if not configured
-- Shows clear error message directing to setup documentation
-- Enhanced logging for all sign-in events
-- Better error messages for users
+A template file that users can copy to create their own `local.properties`:
+```properties
+google.oauth.clientId=YOUR_OAUTH_CLIENT_ID_HERE
+```
 
-### 4. Updated Documentation
+### 5. Updated Documentation
 
-**File:** `GOOGLE_SETUP.md`
+**Files:** `GOOGLE_SETUP.md`, `QUICKSTART_AUTH.md`
 
 **Changes:**
-- Added step 5: "Configure the OAuth Client ID in the App"
-- Clear instructions on updating `strings.xml` with OAuth client ID
-- New troubleshooting section for "OAuth client ID not configured" error
-- Enhanced troubleshooting for sign-in persistence issues
-- Added logcat commands to view diagnostic logs
+- Updated step 5 to use `local.properties` instead of `strings.xml`
+- Clear instructions on copying template and adding OAuth client ID
+- Emphasized that `local.properties` is gitignored
+- Updated troubleshooting sections
 
 ## How to Configure
 
@@ -79,13 +119,16 @@ val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN
    - From Google Cloud Console > APIs & Services > Credentials
    - It looks like: `123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com`
 
-3. **Update strings.xml**:
+3. **Configure local.properties**:
    ```bash
-   # Open the file
-   vi app/src/main/res/values/strings.xml
+   # Copy the template
+   cp local.properties.example local.properties
    
-   # Replace the placeholder
-   <string name="default_web_client_id" translatable="false">YOUR_ACTUAL_CLIENT_ID_HERE</string>
+   # Edit the file
+   vi local.properties
+   
+   # Add your OAuth client ID
+   google.oauth.clientId=YOUR_ACTUAL_CLIENT_ID_HERE
    ```
 
 4. **Rebuild the App**:
