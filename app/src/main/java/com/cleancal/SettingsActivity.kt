@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -27,15 +28,20 @@ class SettingsActivity : AppCompatActivity() {
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
+        Log.d(TAG, "Sign-in result received: resultCode=${result.resultCode}")
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
-                task.getResult(ApiException::class.java)
+                val account = task.getResult(ApiException::class.java)
+                Log.d(TAG, "Sign-in successful: ${account?.email}")
                 updateAccountStatus()
             } catch (e: ApiException) {
-                // Sign-in failed
-                txtAccountStatus.text = "Unable to connect to Google account. Please try again."
+                Log.e(TAG, "Sign-in failed: ${e.statusCode} - ${e.message}")
+                txtAccountStatus.text = "Sign-in failed: ${e.message}"
             }
+        } else {
+            Log.w(TAG, "Sign-in cancelled or failed: resultCode=${result.resultCode}")
+            txtAccountStatus.text = "Sign-in cancelled"
         }
     }
     
@@ -107,6 +113,13 @@ class SettingsActivity : AppCompatActivity() {
     }
     
     private fun setupGoogleSignIn() {
+        // Check if OAuth client ID is configured
+        if (!authManager.isClientIdConfigured()) {
+            txtAccountStatus.text = "OAuth client ID not configured. See GOOGLE_SETUP.md for setup instructions."
+            btnConnectGoogle.isEnabled = false
+            return
+        }
+        
         // Enable the button
         btnConnectGoogle.isEnabled = true
         
@@ -146,11 +159,13 @@ class SettingsActivity : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "SettingsActivity resumed")
         // Update account status when activity resumes
         updateAccountStatus()
     }
 
     companion object {
+        private const val TAG = "SettingsActivity"
         const val PREFS_NAME = "CleanCalPrefs"
         const val PREF_DEFAULT_VIEW = "default_view"
     }

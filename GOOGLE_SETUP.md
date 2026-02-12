@@ -100,11 +100,29 @@ keytool -list -v -keystore /path/to/your/release.keystore -alias your_alias
 5. Click "CREATE"
 6. Your OAuth client will be created and you'll see the client details
 
-### 5. No Additional Configuration Needed
+### 5. Configure the OAuth Client ID in the App
 
-The CleanCal app is already configured to use the Google Sign-In SDK and will automatically use your OAuth credentials once they are set up in the Google Cloud Console.
+After creating your OAuth 2.0 credentials, you need to configure the client ID in the CleanCal app.
 
-**Important:** The OAuth client ID is associated with your app's package name (`com.cleancal`) and SHA-1 certificate fingerprint. The app will automatically discover and use these credentials.
+**Important:** The OAuth client ID from step 4 must be added to the app's configuration for Google Sign-In to work properly.
+
+#### Option 1: Update strings.xml (Recommended for developers)
+
+1. Open `app/src/main/res/values/strings.xml` in your project
+2. Find the line with `default_web_client_id`
+3. Replace `YOUR_OAUTH_CLIENT_ID_HERE` with your actual OAuth 2.0 client ID
+4. Example:
+   ```xml
+   <string name="default_web_client_id" translatable="false">123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com</string>
+   ```
+
+#### Option 2: Using google-services.json (For Firebase users)
+
+If you're also using Firebase, you can add `google-services.json` to your `app/` directory, and the app will automatically use the client ID from that file.
+
+**After configuration:**
+- Rebuild the app: `make build`
+- The app will now properly persist your Google account after sign-in
 
 ## Using Google Calendar in CleanCal
 
@@ -139,6 +157,64 @@ Once authenticated:
 
 ## Troubleshooting
 
+### "OAuth client ID not configured" Error
+
+**Problem:** When opening Settings, you see "OAuth client ID not configured" and the Connect button is disabled.
+
+**Root Cause:** The app needs your OAuth 2.0 client ID to properly authenticate and persist your Google account.
+
+**Solution:**
+1. Complete steps 1-4 above to create OAuth credentials in Google Cloud Console
+2. Copy your OAuth 2.0 client ID (it looks like: `123456789012-abc...xyz.apps.googleusercontent.com`)
+3. Open `app/src/main/res/values/strings.xml`
+4. Replace `YOUR_OAUTH_CLIENT_ID_HERE` with your actual client ID:
+   ```xml
+   <string name="default_web_client_id" translatable="false">YOUR_ACTUAL_CLIENT_ID_HERE</string>
+   ```
+5. Rebuild the app: `make build`
+6. Reinstall on your device
+
+### "Sign-in failed" or Account Not Persisting
+
+**Problem:** Sign-in completes but the app shows "Not Connected" when you return to Settings.
+
+**Possible causes:**
+1. OAuth client ID not configured correctly in `strings.xml`
+2. SHA-1 fingerprint mismatch between the keystore used to build the app and the one registered in Google Cloud Console
+3. OAuth client not properly configured in Google Cloud Console
+
+**Solutions:**
+
+1. **Verify OAuth Client ID Configuration:**
+   - Open `app/src/main/res/values/strings.xml`
+   - Ensure `default_web_client_id` is set to your actual OAuth client ID
+   - The client ID should be from the "Android" OAuth client type (not Web)
+
+2. **Check Logcat for Detailed Errors:**
+   ```bash
+   # View logs from the app
+   adb logcat | grep -E "GoogleAuthManager|SettingsActivity"
+   ```
+   Look for messages like:
+   - "OAuth client ID not configured"
+   - "Sign-in failed: [error code]"
+   - "No user currently signed in"
+
+3. **Verify SHA-1 Fingerprint:**
+   - Get the SHA-1 from your current keystore:
+     ```bash
+     docker compose run --rm build keytool -list -v -keystore /workspace/debug.keystore -alias androiddebugkey -storepass android -keypass android
+     ```
+   - Compare with the SHA-1 registered in Google Cloud Console (APIs & Services > Credentials)
+   - If they don't match, either:
+     - Add the correct SHA-1 to your OAuth client in Google Cloud Console, OR
+     - Use the keystore that matches the registered SHA-1
+
+4. **Wait for Changes to Propagate:**
+   - After updating OAuth credentials in Google Cloud Console, wait 5-10 minutes
+   - Clear app data: `adb shell pm clear com.cleancal`
+   - Try signing in again
+
 ### "Keystore file does not exist" Error
 
 **Problem:** When running the keytool command, you get an error that the keystore file doesn't exist.
@@ -162,15 +238,18 @@ The keystore file will be created in your project root directory and will persis
 ### "Sign-in failed" Error
 
 **Possible causes:**
-1. OAuth credentials not configured correctly
-2. SHA-1 fingerprint mismatch
-3. Google Calendar API not enabled
+1. OAuth client ID not configured in strings.xml
+2. OAuth credentials not configured correctly
+3. SHA-1 fingerprint mismatch
+4. Google Calendar API not enabled
 
 **Solutions:**
-1. Verify that the Google Calendar API is enabled in your Google Cloud project
-2. Double-check that the package name in the OAuth client matches `com.cleancal`
-3. Ensure the SHA-1 fingerprint matches the keystore you're using to build the app
-4. Wait a few minutes for changes to propagate (Google Cloud changes can take 5-10 minutes)
+1. Ensure you've configured the OAuth client ID in `strings.xml` (see step 5 above)
+2. Verify that the Google Calendar API is enabled in your Google Cloud project
+3. Double-check that the package name in the OAuth client matches `com.cleancal`
+4. Ensure the SHA-1 fingerprint matches the keystore you're using to build the app
+5. Check logcat for detailed error messages: `adb logcat | grep GoogleAuthManager`
+6. Wait a few minutes for changes to propagate (Google Cloud changes can take 5-10 minutes)
 
 ### No Events Displayed
 
